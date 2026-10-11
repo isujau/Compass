@@ -1,10 +1,10 @@
 package com.example.simplecamera
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
@@ -43,6 +43,9 @@ class MainActivity : AppCompatActivity() {
 
         previewView = findViewById(R.id.previewView)
         findViewById<Button>(R.id.captureButton).setOnClickListener { takePhoto() }
+        findViewById<Button>(R.id.galleryButton).setOnClickListener {
+            startActivity(Intent(this, GalleryActivity::class.java))
+        }
         findViewById<Button>(R.id.flipButton).setOnClickListener {
             lensFacing = if (lensFacing == CameraSelector.LENS_FACING_BACK)
                 CameraSelector.LENS_FACING_FRONT else CameraSelector.LENS_FACING_BACK
@@ -114,8 +117,7 @@ class MainActivity : AppCompatActivity() {
         vibrate()
 
         // App-private storage: only this app can read it, and it is deleted on uninstall
-        val dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES) ?: filesDir
-        dir.mkdirs()
+        val dir = PhotoStore.dir(this)
         val name = SimpleDateFormat("yyyyMMdd_HHmmss_SSS", Locale.US)
             .format(System.currentTimeMillis())
         val file = File(dir, "IMG_$name.jpg")
